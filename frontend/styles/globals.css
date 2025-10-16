@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+body {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Satoshi font faces */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-MediumItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-satoshi {
+  font-family: "Satoshi", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+}
