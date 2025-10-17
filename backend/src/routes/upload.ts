@@ -21,7 +21,12 @@ const storage = multer.diskStorage({
     cb(null, `${randomUUID()}-${file.originalname}`),
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB
+  },
+});
 
 // Je map le nom du fichier avec l'id attribué afin de les recuperer facilement
 // je definie un type pour la valeur de ma map
@@ -39,12 +44,30 @@ router.post(
   "/upload",
   upload.single("file"), // Permet de recuperer les types file, .single fait reference au middleware multer pour la recuperation d'un fichier
   (req: express.Request, res: express.Response) => {
+    console.log("Upload request received");
+    console.log("Content-Type:", req.headers["content-type"]);
+    console.log("Body keys:", Object.keys(req.body));
+
     // je recupere le fichier qui se trouve dans la requete
     const file = req.file;
+    console.log(
+      "File received:",
+      file ? `${file.originalname} (${file.size} bytes)` : "No file"
+    );
 
     // Si le fichier n'existe pas alors je renvoie une erreur.
-    if (!file || file.size > 10 * 1000)
+    if (!file) {
+      console.log("No file in request");
       return res.status(400).json({ error: "Aucun fichier reçu" });
+    }
+
+    // Augmenter la limite à 50MB (50 * 1024 * 1024 bytes)
+    if (file.size > 50 * 1024 * 1024) {
+      console.log("File too large:", file.size);
+      return res
+        .status(400)
+        .json({ error: "Fichier trop volumineux (max 50MB)" });
+    }
 
     // Je crée les differents const qui vont me permettre de sauvegarder le fichier
     const id = randomUUID(); // un uuid aleatoire de type V4
