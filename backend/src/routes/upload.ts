@@ -41,8 +41,10 @@ router.post(
   (req: express.Request, res: express.Response) => {
     // je recupere le fichier qui se trouve dans la requete
     const file = req.file;
+
     // Si le fichier n'existe pas alors je renvoie une erreur.
-    if (!file) return res.status(400).json({ error: "Aucun fichier reçu" });
+    if (!file || file.size > 10 * 1000)
+      return res.status(400).json({ error: "Aucun fichier reçu" });
 
     // Je crée les differents const qui vont me permettre de sauvegarder le fichier
     const id = randomUUID(); // un uuid aleatoire de type V4
