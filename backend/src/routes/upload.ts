@@ -15,18 +15,40 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 // Je def un stockage
 const storage = multer.diskStorage({
-  // des
+  // filename va definir le nom des fichiers enregistrés avec l'uuid attribué et le nom
   destination: (_req, _file, cb) => cb(null, uploadDir),
   filename: (_req, file, cb) =>
     cb(null, `${randomUUID()}-${file.originalname}`),
 });
 
+// Je definis une taille max des fichiers
 const upload = multer({
   storage: storage,
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB
   },
 });
+
+// Nettoyage des fichiers orphelins au démarrage
+// Si je redemarre le serveur la map qui possede les infos des fichiers est vidé et donc impossible de récuper les fichiers
+function cleanupOrphanedFiles() {
+  try {
+    const files = fs.readdirSync(uploadDir);
+    console.log(`Nettoyage de ${files.length} fichiers orphelins`);
+
+    files.forEach((file) => {
+      const filePath = path.join(uploadDir, file);
+      fs.unlinkSync(filePath);
+      console.log(`Fichier supprimé: ${file}`);
+    });
+
+    console.log("Fin du processus de nettoyage");
+  } catch (error) {
+    console.error("Erreur lors du nettoyage:", error);
+  }
+}
+
+cleanupOrphanedFiles();
 
 // Je map le nom du fichier avec l'id attribué afin de les recuperer facilement
 // je definie un type pour la valeur de ma map
@@ -44,26 +66,16 @@ router.post(
   "/upload",
   upload.single("file"), // Permet de recuperer les types file, .single fait reference au middleware multer pour la recuperation d'un fichier
   (req: express.Request, res: express.Response) => {
-    console.log("Upload request received");
-    console.log("Content-Type:", req.headers["content-type"]);
-    console.log("Body keys:", Object.keys(req.body));
-
     // je recupere le fichier qui se trouve dans la requete
     const file = req.file;
-    console.log(
-      "File received:",
-      file ? `${file.originalname} (${file.size} bytes)` : "No file"
-    );
 
     // Si le fichier n'existe pas alors je renvoie une erreur.
     if (!file) {
-      console.log("No file in request");
       return res.status(400).json({ error: "Aucun fichier reçu" });
     }
 
-    // Augmenter la limite à 50MB (50 * 1024 * 1024 bytes)
+    // si la taille du fichier est trop grande alors je return une erreur
     if (file.size > 50 * 1024 * 1024) {
-      console.log("File too large:", file.size);
       return res
         .status(400)
         .json({ error: "Fichier trop volumineux (max 50MB)" });
@@ -77,8 +89,8 @@ router.post(
     // la const timeoutId fait reference a une methode setTimeout de node qui execute du code apres un certain temps soit une heure
     const timeoutId = setTimeout(() => {
       fs.unlink(filePath, () => {});
-      files.delete(id); // apres le delais depassé je supprime les metadonnées de l'id
-    }, 1 * 60 * 60 * 1000);
+      files.delete(id); // apres le delais depassé je supprime les metadonnées et le fichier
+    }, 0.5 * 60 * 60 * 1000); // 30min
 
     // Dans la map que j'ai créé precedement je vais ajouter mon les indos du fichier avec comme clé l'id et en valeur les restes des infos
     files.set(id, { filePath, originalName, timeoutId });
@@ -114,8 +126,6 @@ router.get("/download/:id", (req: express.Request, res: express.Response) => {
   // Si l'id n'est pas dans ma map alors c'est que le fichier n'existe pas.
   if (!meta) return res.status(404).json({ error: "Lien invalide ou expiré" });
 
-  // La reponse de cette requete get dois etre un telecharegment
-  // filePath est le chemin du fichier sur le serveur que vous voulez envoyer.
   // et meta.originalName : Le nom sous lequel le fichier sera téléchargé par le client.
   // le cb err va permettre d'executer du code une fois le telechargement terminé
   res.download(meta.filePath, meta.originalName, (err) => {
@@ -126,7 +136,6 @@ router.get("/download/:id", (req: express.Request, res: express.Response) => {
       files.delete(id);
     } else {
       // en cas d'erreur d'envoi, retourne une erreur (et conserve le fichier pour debug)
-      console.error("Erreur download:", err);
       if (!res.headersSent)
         res.status(500).json({ error: "Erreur lors du téléchargement" });
     }

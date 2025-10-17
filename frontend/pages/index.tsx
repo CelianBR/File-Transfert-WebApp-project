@@ -15,6 +15,12 @@ export default function HomePage() {
       return;
     }
 
+    // Premiere verification dans le front pour eviter l'envoi de fichier de plus de 50mo
+    if (selectedFile.size > 50 * 1024 * 1024) {
+      setError("Votre fichier dépasse 50 Mb");
+      setSend(false);
+      return;
+    }
     // Bloquer le bouton tout de suite
     setSend(true);
 
@@ -50,9 +56,12 @@ export default function HomePage() {
         encType="multipart/form-data"
         className="max-h-80 space-y-4 bg-white border-black p-6 rounded-2xl shadow-2xl max-w-sm flex flex-col items-center justify-center"
       >
-        <h2 className="text-xl font-md mb-6 text-center">
+        <h2 className="text-xl font-md mb-2 text-center">
           Sélectionner vos fichiers
         </h2>
+        <h3 className="text-mb font-light mb-5 text-center text-gray-600">
+          maximum 50Mb
+        </h3>
 
         {/* Input file caché */}
         <input
@@ -112,7 +121,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {error && <p>{error}</p>}
+        {error && <p className="text-red-500">{error}</p>}
       </form>
 
       <div className="w-screen flex flex-col">

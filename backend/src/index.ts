@@ -6,21 +6,17 @@ import uploadRouter from "./routes/upload";
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Configuration CORS plus flexible pour le déploiement
+// Configuration CORS pour le déploiement ou le dev
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://localhost:3001",
   process.env.FRONTEND_ORIGIN,
-].filter(Boolean); // Retire les valeurs undefined
-
-console.log("CORS allowed origins:", ALLOWED_ORIGINS);
+].filter(Boolean); // Retire les valeurs undefined (si ma v.e FRONTEND_ORIGIN n'est pas definie)
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log("Request origin:", origin);
-
-      // Permet les requêtes sans origin (Postman, curl, server-to-server)
+      // Permet les requêtes sans origin (curl pour tester les routes)
       if (!origin) return callback(null, true);
 
       // Vérifie si l'origin est dans la liste autorisée
@@ -31,15 +27,15 @@ app.use(
       console.error("CORS blocked origin:", origin);
       callback(new Error(`CORS not allowed for origin: ${origin}`));
     },
-    credentials: true, // Permet les cookies si nécessaire
+    credentials: true, // Permet les cookies
   })
 );
 
 // Definition des middlewares
 app.use(express.json());
 
-// Routes API - toutes préfixées par /api pour clarte
-app.use("/api/file", uploadRouter); // Route pour les fonctionnalités liées aux uploads
+// Routes API
+app.use("/api/file", uploadRouter); // Route pour les fonctionnalités liées aux uploads et download
 
 app.get("/", (req, res) => {
   res.redirect("/api/health");
