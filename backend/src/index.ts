@@ -4,15 +4,34 @@ import uploadRouter from "./routes/upload";
 
 // Je definie l'app express et son port 8080, les variables d'environnement sont definies en prod sur railway
 const app = express();
-const port = 8080;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+const port = process.env.PORT || 8080;
+
+// Configuration CORS plus flexible pour le déploiement
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  process.env.FRONTEND_ORIGIN,
+].filter(Boolean); // Retire les valeurs undefined
+
+console.log("CORS allowed origins:", ALLOWED_ORIGINS);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || origin === FRONTEND_ORIGIN) return callback(null, true);
-      callback(new Error("CORS not allowed"));
+      console.log("Request origin:", origin);
+
+      // Permet les requêtes sans origin (Postman, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Vérifie si l'origin est dans la liste autorisée
+      if (ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.error("CORS blocked origin:", origin);
+      callback(new Error(`CORS not allowed for origin: ${origin}`));
     },
+    credentials: true, // Permet les cookies si nécessaire
   })
 );
 
