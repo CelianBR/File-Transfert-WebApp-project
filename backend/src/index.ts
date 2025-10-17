@@ -2,12 +2,19 @@ import cors from "cors";
 import express from "express";
 import uploadRouter from "./routes/upload";
 
-// Je definie l'app express et son port 8080
+// Je definie l'app express et son port 8080, les variables d'environnement sont definies en prod sur railway
 const app = express();
 const port = 8080;
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
 
-// Configuration CORS pour permettre les requêtes du frontend Next.js
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || origin === FRONTEND_ORIGIN) return callback(null, true);
+      callback(new Error("CORS not allowed"));
+    },
+  })
+);
 
 // Definition des middlewares
 app.use(express.json());
