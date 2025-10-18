@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import uploadRouter from "./routes/upload";
 
-// Je definie l'app express et son port 8080, les variables d'environnement sont definies en prod sur railway
+// Je définis l'app express et son port 8080, les variables d'environnement sont définies en prod sur railway
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -11,7 +11,7 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://localhost:3001",
   process.env.FRONTEND_ORIGIN,
-].filter(Boolean); // Retire les valeurs undefined (si ma v.e FRONTEND_ORIGIN n'est pas definie)
+].filter(Boolean); // Retire les valeurs undefined (si ma v.e FRONTEND_ORIGIN n'est pas définie)
 
 app.use(
   cors({
@@ -19,7 +19,8 @@ app.use(
       // Permet les requêtes sans origin (curl pour tester les routes)
       if (!origin) return callback(null, true);
 
-      // Vérifie si l'origin est dans la liste autorisée
+      // Vérifie si l'origine est dans la liste autorisée
+      // quand le serveur est en prod il n'accepte que le serveur front
       if (ALLOWED_ORIGINS.includes(origin)) {
         return callback(null, true);
       }
@@ -31,7 +32,7 @@ app.use(
   })
 );
 
-// Definition des middlewares
+// Définition des middlewares
 app.use(express.json());
 
 // Routes API
@@ -45,7 +46,7 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Backend API is running" });
 });
 
-// Lancemenet du serveur node sur le port def precedement
+// Lancement du serveur node sur le port défini précédemment
 app.listen(port, () => {
   console.log(`API serveur en ligne sur le port ${port}`);
 });
