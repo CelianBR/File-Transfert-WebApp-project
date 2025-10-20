@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
+/* Configuration responsive de base */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Supprimer overflow: hidden pour permettre le scroll mobile */
+}
+
+/* Styles responsive pour les très petits écrans */
+@media (max-width: 320px) {
+  .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Améliorer l'affichage sur mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.2;
+  }
 }
 
 /* Satoshi font faces */

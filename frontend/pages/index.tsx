@@ -64,17 +64,17 @@ export default function HomePage() {
   }
 
   return (
-    <main className=" relative z-10 p-8 min-h-80 flex flex-row gap-x-10 mt-16">
+    <main className="relative z-10 p-4 sm:p-8 min-h-80 flex flex-col lg:flex-row gap-6 lg:gap-x-10 mt-8 lg:mt-16">
       {/* Formulaire */}
       <form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="max-h-80 space-y-4 bg-white border-black p-6 rounded-2xl shadow-2xl max-w-sm flex flex-col items-center justify-center"
+        className="w-full lg:max-w-sm space-y-4 bg-white border-black p-4 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center mx-auto lg:mx-0"
       >
-        <h2 className="text-xl font-md mb-2 text-center">
+        <h2 className="text-lg sm:text-xl font-md mb-2 text-center">
           Sélectionner vos fichiers
         </h2>
-        <h3 className="text-mb font-light mb-5 text-center text-gray-600">
+        <h3 className="text-sm sm:text-base font-light mb-5 text-center text-gray-600">
           maximum 50Mb
         </h3>
 
@@ -96,16 +96,16 @@ export default function HomePage() {
         <label
           htmlFor="file-input" // Cette commande permet d'associer l'input au clic sur le label
           // Sinon création du style de la zone de drop
-          className="block w-full p-6 border-2 border-dashed border-blue-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer text-center bg-blue-100/50"
+          className="block w-full p-4 sm:p-6 border-2 border-dashed border-blue-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer text-center bg-blue-100/50"
         >
           <div className="flex flex-col items-center space-y-3">
             <div>
-              <span className="text-gray-700 font-medium">
+              <span className="text-sm sm:text-base text-gray-700 font-medium">
                 {selectedFile
                   ? selectedFile.name
                   : "Cliquez pour choisir un fichier"}
               </span>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 {selectedFile
                   ? `Taille: ${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`
                   : "Ou glissez-déposez votre fichier ici"}
@@ -117,7 +117,7 @@ export default function HomePage() {
         {!send ? ( // Si le bouton n'est pas envoyé on propose le bouton envoyer
           <button
             type="submit"
-            className="w-70 bg-blue-700/90 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors cursor-pointer "
+            className="w-full sm:w-auto px-6 py-3 bg-blue-700/90 text-white rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
             disabled={send}
             style={{ pointerEvents: "auto", position: "relative", zIndex: 20 }}
           >
@@ -125,7 +125,7 @@ export default function HomePage() {
           </button>
         ) : (
           // Sinon c'est le bouton copier le lien qui est affiché.
-          <div>
+          <div className="w-full">
             <button
               onClick={() => {
                 if (downloadLink) {
@@ -133,27 +133,31 @@ export default function HomePage() {
                   alert("lien copié");
                 }
               }}
-              className="w-70 bg-black py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors text-white"
+              className="w-full sm:w-auto px-6 py-3 bg-black rounded-xl hover:bg-gray-800 transition-colors text-white"
             >
               Copier le lien
             </button>
           </div>
         )}
 
-        {error && <p className="text-red-500">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm sm:text-base text-center">
+            {error}
+          </p>
+        )}
       </form>
 
-      <div className="w-screen flex flex-col">
-        <h1 className="text-3xl text-blue-600 font-semibold mb-6 text-center font-satoshi">
+      <div className="flex-1 flex flex-col">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl text-blue-600 font-semibold mb-6 text-center font-satoshi">
           ENVOYER VOS FICHIERS
         </h1>
 
-        <div className="p-10">
-          <p className="text-center">
+        <div className="p-4 sm:p-6 lg:p-10">
+          <p className="text-center text-sm sm:text-base mb-4">
             Ce site web permet d'envoyer des petits fichiers uniques (ex photos,
             pdf, etc) de manière rapide et sécurisée.
           </p>
-          <p className="text-center">
+          <p className="text-center text-sm sm:text-base">
             Une fois le fichier téléversé. Envoyez le lien unique à la personne
             de votre choix. Cette personne pourra alors récupérer le fichier.
           </p>

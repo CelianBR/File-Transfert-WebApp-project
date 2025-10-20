@@ -48,25 +48,25 @@ export default function AnimatedBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden -z-10">
       {/* Animated blob 1 */}
       <div
         ref={blob1Ref}
-        className="absolute w-96 h-96 bg-gradient-to-r from-slate-500/30 to-blue-500/30 rounded-full blur-3xl"
+        className="absolute w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-slate-500/30 to-blue-500/30 rounded-full blur-3xl"
         style={{ top: "10%", left: "10%" }}
       />
 
       {/* Animated blob 2 */}
       <div
         ref={blob2Ref}
-        className="absolute w-96 h-96 bg-gradient-to-r from-slate-500/30 to-slate-500/30 rounded-full blur-3xl"
+        className="absolute w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-slate-500/30 to-slate-500/30 rounded-full blur-3xl"
         style={{ bottom: "10%", right: "10%" }}
       />
 
       {/* Animated blob 3 */}
       <div
         ref={blob3Ref}
-        className="absolute w-96 h-96 bg-gradient-to-r from-blue-800/20 to-cyan-500/20 rounded-full blur-3xl"
+        className="absolute w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-blue-800/20 to-cyan-500/20 rounded-full blur-3xl"
         style={{ top: "50%", left: "50%" }}
       />
 
@@ -78,7 +78,7 @@ export default function AnimatedBackground() {
             linear-gradient(to right, rgb(148, 163, 184) 1px, transparent 1px),
             linear-gradient(to bottom, rgb(148, 163, 184) 1px, transparent 1px)
           `,
-          backgroundSize: "80px 80px",
+          backgroundSize: "60px 60px", // Grille plus petite sur mobile
         }}
       />
     </div>

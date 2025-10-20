@@ -62,30 +62,38 @@ export default function downloadPage() {
   }
 
   return (
-    <main className="relative z-10 p-8 min-h-80 flex gap-x-10">
-      <div className="w-screen flex flex-col justify-center items-center">
-        <h1 className="text-3xl text-blue-600 font-semibold mb-15 text-center font-satoshi">
+    <main className="relative z-10 p-4 sm:p-8 min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-md flex flex-col justify-center items-center">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl text-blue-600 font-semibold mb-8 sm:mb-12 text-center font-satoshi">
           TÉLÉCHARGEZ VOS FICHIERS
         </h1>
         {fileName && (
-          <div>
+          <div className="w-full bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
             {/* Titre */}
-            <p className="text-center mb-4">
+            <p className="text-center mb-6 text-sm sm:text-base">
               <strong className="text-blue-800">Nom du fichier :</strong>{" "}
-              {fileName}
+              <span className="break-all">{fileName}</span>
             </p>
             {/* Bouton de téléchargement qui n'est pas cliquable si aucun fichier ou id ou si le fichier est déjà téléchargé*/}
             <button
               onClick={downloadHandle}
               disabled={!id || !fileName || isDownloaded}
-              className="w-70 bg-blue-600  py-3 px-4 rounded-full hover:bg-gray-800 transition-colors text-white"
+              className="w-full bg-blue-600 py-3 px-4 rounded-full hover:bg-blue-700 disabled:bg-gray-400 transition-colors text-white font-medium"
             >
-              Télécharger le fichier
+              {isDownloaded
+                ? "Téléchargement en cours..."
+                : "Télécharger le fichier"}
             </button>
           </div>
         )}
 
-        <p>{error}</p>
+        {error && (
+          <div className="w-full max-w-md mt-4">
+            <p className="text-red-500 text-center bg-red-50 p-4 rounded-lg border border-red-200">
+              {error}
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );
